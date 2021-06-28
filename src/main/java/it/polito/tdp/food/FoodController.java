@@ -7,6 +7,7 @@ package it.polito.tdp.food;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.food.model.Food;
 import it.polito.tdp.food.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -41,7 +42,7 @@ public class FoodController {
     private Button btnSimula; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxFood"
-    private ComboBox<?> boxFood; // Value injected by FXMLLoader
+    private ComboBox<Food> boxFood; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtResult"
     private TextArea txtResult; // Value injected by FXMLLoader
@@ -50,12 +51,28 @@ public class FoodController {
     void doCreaGrafo(ActionEvent event) {
     	txtResult.clear();
     	txtResult.appendText("Creazione grafo...");
+    	String nString = txtPorzioni.getText();
+    	int n;
+    	try {
+    		n= Integer.parseInt(nString);
+    	}catch(NumberFormatException e) {
+    		txtResult.appendText("Devi inserire un numero!");
+    		return;
+    	}
+    	model.creaGrafo(n);
+    	txtResult.appendText(model.infoGrafo());
+    	boxFood.setDisable(false);
+    	boxFood.getItems().addAll(model.getFoodVertici());
+    	btnCalorie.setDisable(false);
+    	
     }
     
     @FXML
     void doCalorie(ActionEvent event) {
     	txtResult.clear();
     	txtResult.appendText("Analisi calorie...");
+    	Food food = boxFood.getValue();
+    	txtResult.appendText(""+model.getAdiacenti(food));
     }
 
     @FXML
@@ -77,5 +94,10 @@ public class FoodController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	txtK.setDisable(true);
+    	btnCalorie.setDisable(true);
+    	btnSimula.setDisable(true);
+    	boxFood.setDisable(true);
+    	txtResult.setEditable(false);
     }
 }
